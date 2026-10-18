@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>AeroLab — аэродинамическая труба</title>
+<style>
+:root{--bg:#eceff4;--cd:#fff;--tx:#0d1b2a;--mu:#5d6b7e;--ac:#0d9488;--on:#fff;--ln:#d6dce6;--cv:#f6f8fb;--gr:#e0e5ed;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);color-scheme:light}
+@media(prefers-color-scheme:dark){:root:not([data-theme=light]){--bg:#080c12;--cd:#111823;--tx:#e4eaf3;--mu:#8592a6;--ac:#2dd4bf;--on:#03201c;--ln:#202b3b;--cv:#0c121b;--gr:#182131;color-scheme:dark}}
+:root[data-theme=dark]{--bg:#080c12;--cd:#111823;--tx:#e4eaf3;--mu:#8592a6;--ac:#2dd4bf;--on:#03201c;--ln:#202b3b;--cv:#0c121b;--gr:#182131;color-scheme:dark}
+*,*:before,*:after{box-sizing:inherit}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--tx);font:15px/1.4 "Avenir Next",Avenir,"Segoe UI",system-ui,sans-serif;-webkit-tap-highlight-color:transparent;-webkit-user-select:none;user-select:none}
+#app{max-width:760px;margin:0 auto;padding:10px 12px 30px}
+header{display:flex;align-items:center;justify-content:space-between;padding:2px 2px 10px}
+h1{font-size:21px;margin:0;letter-spacing:-.5px;font-weight:800}h1 b{color:var(--ac)}
+.seg{display:flex;background:var(--gr);border-radius:12px;padding:3px;gap:2px}
+.seg button{flex:1;border:0;background:none;color:var(--mu);font:inherit;font-weight:650;padding:8px 11px;border-radius:9px;white-space:nowrap}
+.seg button.on{background:var(--cd);color:var(--tx);box-shadow:0 1px 4px #0003}
+.cw{margin:10px 0;border-radius:16px;overflow:hidden;border:1px solid var(--ln);background:var(--cv)}
+#cv{display:block;width:100%;height:auto;aspect-ratio:800/540;touch-action:none}
+.card{background:var(--cd);border:1px solid var(--ln);border-radius:16px;padding:13px;margin-bottom:10px}
+.chips{display:flex;gap:6px;flex-wrap:wrap}
+.b{border:1px solid var(--ln);background:var(--cd);color:var(--tx);font:inherit;font-weight:650;padding:9px 12px;border-radius:11px;display:inline-block}
+.b.on,.b.p{background:var(--ac);border-color:var(--ac);color:var(--on)}
+.b:active{transform:scale(.97)}
+.sl{display:block;margin-top:11px}.sl span{display:flex;justify-content:space-between;color:var(--mu);font-size:13px}.sl b{color:var(--tx)}
+input[type=range]{width:100%;accent-color:var(--ac);margin:5px 0 0;height:28px}
+.tg{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:13px}.tg small{display:block;color:var(--mu);font-size:12px}
+.sw{-webkit-appearance:none;appearance:none;flex:none;width:50px;height:30px;border-radius:15px;background:var(--gr);border:1px solid var(--ln);position:relative;margin:0;transition:.2s}
+.sw:after{content:"";position:absolute;top:2px;left:2px;width:24px;height:24px;border-radius:50%;background:#fff;transition:.2s;box-shadow:0 1px 3px #0005}
+.sw:checked{background:var(--ac)}.sw:checked:after{left:22px}
+.top{display:flex;align-items:center;gap:14px;margin-bottom:12px}
+.gd{flex:none;width:70px;height:70px;border-radius:18px;display:grid;place-items:center;font-size:36px;font-weight:800;color:#fff}
+.bar{height:8px;border-radius:5px;background:var(--gr);overflow:hidden;margin-top:7px}.bar i{display:block;height:100%;transition:width .3s}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.m{background:var(--bg);border-radius:12px;padding:9px 11px}.m small{color:var(--mu);display:block;font-size:12px}.m b{font-size:17px}
+.wn{margin-top:10px;padding:9px 11px;border-radius:12px;background:#f59e0b26;font-size:13px}
+.ft{color:var(--mu);font-size:12px;margin:4px 2px}
+#ts{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--tx);color:var(--bg);padding:9px 14px;border-radius:12px;font-size:14px;max-width:90%;text-align:center;opacity:0;pointer-events:none;transition:.25s}
+#ts.on{opacity:1}
+.tools{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+.tb{border:1px solid var(--ln);background:var(--cd);color:var(--tx);border-radius:12px;padding:9px 2px 7px;display:flex;flex-direction:column;align-items:center;gap:4px;font:inherit;font-size:12px;font-weight:650}
+.tb.on{background:var(--ac);border-color:var(--ac);color:var(--on)}
+.b.ic{display:inline-flex;align-items:center;gap:7px}
+.seg button{display:flex;align-items:center;justify-content:center;gap:6px}
+.sws{display:flex;gap:10px;margin-top:12px;align-items:center}.sws span{color:var(--mu);font-size:13px;margin-right:2px}
+.sq{width:30px;height:30px;padding:0;border-radius:50%;border:2px solid var(--cd);box-shadow:0 0 0 1px var(--ln)}.sq.on{box-shadow:0 0 0 2.5px var(--ac)}
+.dt{display:inline-block;width:10px;height:10px;border-radius:50%;margin:0 5px 0 12px;vertical-align:-1px}.dt:first-child{margin-left:0}
+[hidden]{display:none!important}
+</style>
+</head>
+<body>
+<div id="app">
+<header><h1>Aero<b>Lab</b></h1><div class="seg" id="thm"><button data-v="auto">Авто</button><button data-v="light" data-i="sun" aria-label="Светлая"></button><button data-v="dark" data-i="moon" aria-label="Тёмная"></button></div></header>
+<div class="seg" id="tabs"><button class="on" data-i="pen">Рисунок</button><button data-i="wind">Аэротест</button></div>
+<div class="cw"><canvas id="cv" width="1200" height="810"></canvas></div>
+
+<div id="p0">
+<div class="card">
+<div class="tools" id="tls"></div>
+<div class="sws" id="sws"></div>
+<div class="chips" style="margin-top:12px"><button class="b ic" id="bUn" data-i="undo">Отмена</button><button class="b ic" id="bCl" data-i="trash">Очистить</button><button class="b ic" id="bFl"></button></div>
+<label class="sl"><span>Толщина линии <b id="vlw"></b></span><input type="range" id="rlw" min="2" max="14"></label>
+<label class="sl"><span>Стабилизация линии <b id="vst"></b></span><input type="range" id="rst" min="0" max="10"></label>
+<label class="sl"><span>Сглаживание контура <b id="vsm"></b></span><input type="range" id="rsm" min="0" max="10"></label>
+<div class="chips" style="margin-top:12px"><button class="b ic" id="bSm" data-i="wave">Убрать лесенки</button><label class="b ic" data-i="cam">Фото машины<input type="file" id="file" accept="image/*" hidden></label><button class="b ic on" id="bUl" data-i="eye" hidden>Подложка</button></div>
+<label class="sl" id="phr" hidden><span>Чувствительность контура по фото <b id="vpt"></b></span><input type="range" id="rpt" min="10" max="120"></label>
+</div>
+<div class="card"><div class="ft" style="margin:0 0 8px">Готовые профили</div><div class="chips" id="prs"></div></div>
+</div>
+
+<div id="p1" hidden>
+<div class="card">
+<div class="seg" id="vw"><button>Давление</button><button>Скорость</button><button>Вихри</button></div>
+<div class="ft" id="lg" style="margin-top:8px"></div>
+<label class="sl"><span>Вес машины <b id="vms"></b></span><input type="range" id="rms" min="500" max="3500" step="50"></label>
+<label class="sl"><span>Скорость <b id="vkm"></b></span><input type="range" id="rkm" min="50" max="400" step="5"></label>
+<div class="tg"><div><b>Режим отрыва</b><small>Если подъёмная сила больше веса — машина взлетает</small></div><input type="checkbox" class="sw" id="fl"></div>
+<div class="chips" style="margin-top:12px"><button class="b p ic" id="bGo" data-i="play">Разгон с нуля</button></div>
+</div>
+<div class="card" id="res"></div>
+<p class="ft">Расчёт: двумерная модель потока (решётка Больцмана D2Q9) с подвижной землёй. Cd и Cl приведены к размеру легковой машины длиной 4,5 м — это оценка для сравнения профилей, а не заводское измерение. Иконки: Feather (MIT) и Lucide (ISC).</p>
+</div>
+</div>
+<div id="ts"></div>
+<script>
+(()=>{
+const $=s=>document.querySelector(s),clamp=(v,a,b)=>v<a?a:v>b?b:v;
+const W=800,H=540,GY=500,SC=4,NX=200,NY=125,N=NX*NY,U=.07,OM=1/.58,IC=[100,116,150],INK='rgb(100,116,150)';
+const mk=(w,h)=>{const c=document.createElement('canvas');c.width=w;c.height=h;return c};
+const S={tool:'pen',stab:3,smo:4,pt:40,lw:6,ci:1,ul:true,mass:1500,kmh:200,fl:false,view:0,flip:true,theme:'auto'};
+try{Object.assign(S,JSON.parse(localStorage.getItem('aerolab2')||'{}'))}catch(e){}
+const save=()=>{try{localStorage.setItem('aerolab2',JSON.stringify(S))}catch(e){}};
+const cv=$('#cv'),cx=cv.getContext('2d');
+let tab=0,dark=false,C={},need=1,empty=true,M=null,fc=0,FL={v:0,z:0,vz:0};
+function toast(t){const e=$('#ts');e.textContent=t;e.classList.add('on');clearTimeout(toast.t);toast.t=setTimeout(()=>e.classList.remove('on'),2400)}
+
+/* тема */
+const mq=matchMedia('(prefers-color-scheme: dark)');
+function theme(){const r=document.documentElement;S.theme=='auto'?r.removeAttribute('data-theme'):r.setAttribute('data-theme',S.theme);
+dark=S.theme=='dark'||(S.theme=='auto'&&mq.matches);const g=getComputedStyle(r);
+for(const k of['cv','gr','ln','tx','mu','ac'])C[k]=g.getPropertyValue('--'+k).trim();
+document.querySelectorAll('#thm button').forEach(b=>b.classList.toggle('on',b.dataset.v==S.theme));ltD=1;need=1}
+mq.addEventListener&&mq.addEventListener('change',theme);
+
+/* рисунок: слой линий + слой заливки */
+const LN=mk(W,H),lc=LN.getContext('2d'),FIL=mk(W,H),pc=FIL.getContext('2d');let ud=[],lt=null,ltD=1,st=null,ph=null,pb=null;
+const COL=[[100,116,150],[13,148,136],[59,130,246],[225,29,72],[245,158,11],[139,92,246]];
+/* иконки: Feather (MIT) / Lucide (ISC) */
+const IP={pen:'<path d="M17 3a2.8 2.8 0 0 1 4 4L7.5 20.5 2 22l1.5-5.5z"/>',line:'<path d="M5 19 19 5"/>',circle:'<circle cx="12" cy="12" r="9"/>',oval:'<ellipse cx="12" cy="12" rx="10" ry="6"/>',rect:'<rect x="3" y="4" width="18" height="16" rx="2"/>',
+tri:'<path d="M13.7 4a2 2 0 0 0-3.4 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.7-3z"/>',
+fill:'<path d="m19 11-8-8-8.6 8.6a2 2 0 0 0 0 2.8l5.2 5.2c.8.8 2 .8 2.8 0z"/><path d="m5 2 5 5M2 13h15M22 20a2 2 0 1 1-4 0c0-1.6 1.7-2.4 2-4 .3 1.6 2 2.4 2 4z"/>',
+er:'<path d="m7 21-4.3-4.3c-1-1-1-2.5 0-3.4l9.6-9.6c1-1 2.5-1 3.4 0l5.6 5.6c1 1 1 2.5 0 3.4L13 21M22 21H7M5 11l9 9"/>',
+undo:'<path d="M1 4v6h6"/><path d="M3.5 15a9 9 0 1 0 2.1-9.4L1 10"/>',trash:'<path d="M3 6h18M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>',
+wave:'<path d="M2 16c4-10 6 6 10-4s6 2 10-4"/>',cam:'<path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/>',
+eye:'<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>',play:'<path d="M6 3l14 9-14 9z"/>',
+sun:'<circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.2 4.2l1.4 1.4M18.4 18.4l1.4 1.4M1 12h2M21 12h2M4.2 19.8l1.4-1.4M18.4 5.6l1.4-1.4"/>',moon:'<path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8z"/>',
+arr:'<path d="M5 12h14M12 5l7 7-7 7"/>',arl:'<path d="M19 12H5M12 19l-7-7 7-7"/>',wind:'<path d="M17.7 7.7a2.5 2.5 0 1 1 1.8 4.3H2M9.6 4.6A2 2 0 1 1 11 8H2M12.6 19.4A2 2 0 1 0 14 16H2"/>'};
+const svg=n=>`<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${IP[n]}</svg>`;
+const cp=c=>{const n=mk(W,H);n.getContext('2d').drawImage(c,0,0);return n};
+const put=(c,q)=>{const g=c.getContext('2d');g.globalCompositeOperation='copy';g.drawImage(q,0,0);g.globalCompositeOperation='source-over'};
+const snap=()=>{ud.push([cp(LN),cp(FIL)]);if(ud.length>8)ud.shift()};
+const rest=q=>{put(LN,q[0]);put(FIL,q[1]);ltD=1;need=1};
+function art(g){g.drawImage(FIL,0,0);if(ltD){lt=lt||mk(W,H);const t=lt.getContext('2d');t.globalCompositeOperation='copy';t.drawImage(LN,0,0);t.globalCompositeOperation='source-in';t.fillStyle=dark?'#e7edf7':'#0d1b2a';t.fillRect(0,0,W,H);t.globalCompositeOperation='source-over';ltD=0}g.drawImage(lt,0,0)}
+function chk(){const c=mk(60,40),g=c.getContext('2d');g.drawImage(FIL,0,0,60,40);g.drawImage(LN,0,0,60,40);const d=g.getImageData(0,0,60,40).data;let n=0;for(let i=3;i<d.length;i+=4)n+=d[i];empty=n<400;need=1}
+function sm(p,n){let a=p;for(let k=0;k<n&&a.length>2;k++){const b=[a[0]];for(let i=1;i<a.length-1;i++)b.push([(a[i-1][0]+2*a[i][0]+a[i+1][0])/4,(a[i-1][1]+2*a[i][1]+a[i+1][1])/4]);b.push(a[a.length-1]);a=b}return a}
+function pth(c,p,cl){const n=p.length,m=(a,b)=>[(a[0]+b[0])/2,(a[1]+b[1])/2];c.beginPath();
+if(n<3){c.moveTo(p[0][0],p[0][1]);for(const q of p)c.lineTo(q[0],q[1]);if(cl)c.closePath();return}
+if(cl){const s=m(p[n-1],p[0]);c.moveTo(s[0],s[1]);for(let i=0;i<n;i++){const e=m(p[i],p[(i+1)%n]);c.quadraticCurveTo(p[i][0],p[i][1],e[0],e[1])}c.closePath()}
+else{c.moveTo(p[0][0],p[0][1]);for(let i=1;i<n-1;i++){const e=m(p[i],p[i+1]);c.quadraticCurveTo(p[i][0],p[i][1],e[0],e[1])}c.lineTo(p[n-1][0],p[n-1][1])}}
+function shape(g,t,a,b){let x=Math.min(a[0],b[0]),y=Math.min(a[1],b[1]),w=Math.abs(b[0]-a[0]),h=Math.abs(b[1]-a[1]);g.beginPath();
+if(t=='line'){g.moveTo(a[0],a[1]);g.lineTo(b[0],b[1]);return}
+if(t=='circle'){const q=Math.max(w,h);x=b[0]<a[0]?a[0]-q:a[0];y=b[1]<a[1]?a[1]-q:a[1];w=h=q}
+if(t=='rect')g.rect(x,y,w,h);else if(t=='tri'){g.moveTo(x+w/2,y);g.lineTo(x+w,y+h);g.lineTo(x,y+h);g.closePath()}else g.ellipse(x+w/2,y+h/2,w/2,h/2,0,0,7)}
+const pos=e=>{const r=cv.getBoundingClientRect();return[(e.clientX-r.left)*W/r.width,(e.clientY-r.top)*H/r.height]};
+function paint(){const q=ud[ud.length-1];put(LN,q[0]);put(FIL,q[1]);ltD=1;need=1;const g=lc;g.lineCap=g.lineJoin='round';g.lineWidth=S.lw;g.strokeStyle='#000';
+if(S.tool=='er'){const p=sm(st.pts,S.smo*2);for(const h of[lc,pc]){h.globalCompositeOperation='destination-out';h.lineCap=h.lineJoin='round';h.lineWidth=S.lw*5+10;pth(h,p,0);h.stroke();h.globalCompositeOperation='source-over'}}
+else if(S.tool=='pen'){pth(g,sm(st.pts,S.smo*2),0);g.stroke()}else{shape(g,S.tool,st.pts[0],st.tg);g.stroke()}}
+cv.addEventListener('pointerdown',e=>{if(tab)return;e.preventDefault();const p=pos(e);if(S.tool=='fill'){bucket(p);return}try{cv.setPointerCapture(e.pointerId)}catch(_){}snap();st={b:p,t:e.timeStamp,pts:[p.slice()],tg:p};paint()});
+cv.addEventListener('pointermove',e=>{if(!st)return;e.preventDefault();if(S.tool!='pen'&&S.tool!='er'){st.tg=pos(e);paint();return}
+const ev=e.getCoalescedEvents?e.getCoalescedEvents():[];for(const v of ev.length?ev:[e]){const p=pos(v),dt=Math.max(1,v.timeStamp-st.t||8),k=1-Math.exp(-dt/(S.stab*25+1)),l=st.pts[st.pts.length-1];st.t=v.timeStamp;
+st.b=[st.b[0]+(p[0]-st.b[0])*k,st.b[1]+(p[1]-st.b[1])*k];st.tg=p;if(Math.hypot(st.b[0]-l[0],st.b[1]-l[1])>1.5)st.pts.push(st.b)}paint()});
+const fin=()=>{if(!st)return;if(S.tool=='pen'||S.tool=='er'){for(let i=0;i<10;i++){const b=st.b;st.b=[b[0]+(st.tg[0]-b[0])*.4,b[1]+(st.tg[1]-b[1])*.4];st.pts.push(st.b)}paint()}
+else if(Math.hypot(st.tg[0]-st.pts[0][0],st.tg[1]-st.pts[0][1])<4)rest(ud.pop());st=null;chk()};
+cv.addEventListener('pointerup',fin);cv.addEventListener('pointercancel',fin);
+
+function blur(a,w,h,r){const t=new Float32Array(a.length),k=1/(2*r+1),cl=(v,m)=>v<0?0:v>m?m:v;
+for(let y=0;y<h;y++){let s=0;const o=y*w;for(let x=-r;x<=r;x++)s+=a[o+cl(x,w-1)];for(let x=0;x<w;x++){t[o+x]=s*k;s+=a[o+cl(x+r+1,w-1)]-a[o+cl(x-r,w-1)]}}
+for(let x=0;x<w;x++){let s=0;for(let y=-r;y<=r;y++)s+=t[cl(y,h-1)*w+x];for(let y=0;y<h;y++){a[y*w+x]=s*k;s+=t[cl(y+r+1,h-1)*w+x]-t[cl(y-r,h-1)*w+x]}}}
+function smoothLines(r){const d=lc.getImageData(0,0,W,H),p=d.data,a=new Float32Array(W*H);for(let i=0;i<a.length;i++)a[i]=p[i*4+3]/255;blur(a,W,H,r);blur(a,W,H,r);
+for(let i=0;i<a.length;i++){const t=clamp((a[i]-.25)/.4,0,1);p[i*4]=p[i*4+1]=p[i*4+2]=0;p[i*4+3]=t*t*(3-2*t)*255}lc.putImageData(d,0,0);ltD=1;chk()}
+/* заливка: ограничена линиями, небольшие щели в линии допускаются */
+function bucket(p){const x0=Math.round(p[0]),y0=Math.round(p[1]);if(x0<0||y0<0||x0>=W||y0>=H)return;
+const a=new Float32Array(W*H),d=lc.getImageData(0,0,W,H).data;for(let i=0;i<a.length;i++)a[i]=d[i*4+3]/255;blur(a,W,H,2);blur(a,W,H,2);
+const s0=y0*W+x0;if(a[s0]>.04){toast('Нажмите внутри замкнутого контура');return}
+const reg=new Uint8Array(W*H),q=[s0];reg[s0]=1;let leak=0;const go=j=>{if(!reg[j]&&a[j]<=.04){reg[j]=1;q.push(j)}};
+while(q.length){const i=q.pop(),x=i%W,y=(i/W)|0;if(!x||!y||x==W-1||y==H-1)leak=1;if(x>0)go(i-1);if(x<W-1)go(i+1);if(y>0)go(i-W);if(y<H-1)go(i+W)}
+if(leak){toast('Контур не замкнут — закройте разрыв в линии');return}
+const b=new Float32Array(W*H);for(let i=0;i<b.length;i++)b[i]=reg[i];blur(b,W,H,2);blur(b,W,H,2);
+const t=mk(W,H),id=t.getContext('2d').createImageData(W,H),c=COL[S.ci];
+for(let i=0;i<b.length;i++)if(b[i]>.02){id.data[i*4]=c[0];id.data[i*4+1]=c[1];id.data[i*4+2]=c[2];id.data[i*4+3]=255}
+t.getContext('2d').putImageData(id,0,0);snap();pc.drawImage(t,0,0);chk()}
+
+/* фото -> линии контура (и подложка для обводки) */
+function photo(){if(!ph)return;const{w,h,g}=ph,n=w*h,s=g.slice();blur(s,w,h,1);const e=new Uint8Array(n);
+for(let y=1;y<h-1;y++)for(let x=1;x<w-1;x++){const i=y*w+x;if(Math.abs(s[i+1]-s[i-1])+Math.abs(s[i+w]-s[i-w])>S.pt)e[i]=1}
+const e2=e.slice();for(let y=1;y<h-1;y++)for(let x=1;x<w-1;x++){const i=y*w+x;if(e[i])e2[i-1]=e2[i+1]=e2[i-w]=e2[i+w]=1}
+const o=new Uint8Array(n),q=[],sd=i=>{if(!e2[i]&&!o[i]){o[i]=1;q.push(i)}};
+for(let x=0;x<w;x++){sd(x);sd(n-w+x)}for(let y=0;y<h;y++){sd(y*w);sd(y*w+w-1)}
+while(q.length){const i=q.pop(),x=i%w;if(x>0)sd(i-1);if(x<w-1)sd(i+1);if(i>=w)sd(i-w);if(i<n-w)sd(i+w)}
+let x0=w,x1=-1,y0=h,y1=-1;for(let i=0;i<n;i++)if(!o[i]){const x=i%w,y=i/w|0;if(x<x0)x0=x;if(x>x1)x1=x;if(y<y0)y0=y;if(y>y1)y1=y}
+rest(pb);if(x1-x0<8||y1-y0<4){chk();toast('Контур не найден — подвиньте чувствительность');return}
+const bw=x1-x0+1,bh=y1-y0+1,pd=3,tw=bw+2*pd,th=bh+2*pd,t=mk(tw,th),tg=t.getContext('2d'),id=tg.createImageData(tw,th),E=new Uint8Array(tw*th);
+for(let y=y0;y<=y1;y++)for(let x=x0;x<=x1;x++){const i=y*w+x;if(o[i])continue;
+if(x==0||y==0||x==w-1||y==h-1||o[i-1]||o[i+1]||o[i-w]||o[i+w]){const tx=x-x0+pd,ty=y-y0+pd;for(let dy=-1;dy<2;dy++)for(let dx=-1;dx<2;dx++)E[(ty+dy)*tw+tx+dx]=1}}
+for(let i=0;i<E.length;i++)if(E[i])id.data[i*4+3]=255;tg.putImageData(id,0,0);
+const sc=Math.min(W*.76/bw,(GY-30)/bh),px=(W-bw*sc)/2,py=GY-bh*sc-2;lc.imageSmoothingQuality='high';lc.drawImage(t,px-pd*sc,py-pd*sc,tw*sc,th*sc);
+ph.pl=[px-x0*sc,py-y0*sc,w*sc,h*sc];smoothLines(1)}
+$('#file').onchange=e=>{const f=e.target.files[0];e.target.value='';if(!f)return;const im=new Image();
+im.onload=()=>{const sc=Math.min(1,480/im.width),w=Math.round(im.width*sc),h=Math.round(im.height*sc),c=mk(w,h),g=c.getContext('2d');g.drawImage(im,0,0,w,h);
+const d=g.getImageData(0,0,w,h).data,gr=new Float32Array(w*h);for(let i=0;i<w*h;i++)gr[i]=d[i*4]*.3+d[i*4+1]*.59+d[i*4+2]*.11;
+ph={w,h,g:gr,c,pl:[0,0,w,h]};snap();pb=ud[ud.length-1];$('#phr').hidden=false;$('#bUl').hidden=false;$('#bUl').classList.toggle('on',S.ul);photo();toast('Контур готов: подправьте линии и залейте инструментом «Заливка»');URL.revokeObjectURL(im.src)};
+im.onerror=()=>toast('Не удалось открыть фото');im.src=URL.createObjectURL(f)};
+
+/* шаблоны (единицы: длина 100, земля y=30.5) */
+const PR={'Седан':[[[0,22],[2,15],[17,12.5],[35,4],[57,3],[73,11.5],[97,15],[100,21],[98,26],[2,26]],1,1],
+'Спорткар':[[[0,22],[3,17],[30,12.5],[53,5],[70,9.5],[97,17],[100,22],[98,26],[2,26]],1,1],
+'Капля':[[[0,25],[3,16],[22,7],[48,3.5],[76,8],[96,18],[100,24],[96,26],[4,26]],1,1],
+'Фургон':[[[0,5],[72,5],[86,12],[100,16],[100,26],[0,26]],0,1],
+'Крыло':[[[0,23],[28,14],[62,9],[100,10],[99,14],[65,14.5],[30,20]],1,0]};
+function preset(k,ns){const[p,smf,wh]=PR[k],s=5.6,ox=(W-100*s)/2,oy=GY-30.5*s;if(!ns)snap();lc.clearRect(0,0,W,H);pc.clearRect(0,0,W,H);
+const q=p.map(a=>[ox+a[0]*s,oy+a[1]*s]),dr=[g=>{if(smf)pth(g,q,1);else{g.beginPath();q.forEach((a,i)=>i?g.lineTo(a[0],a[1]):g.moveTo(a[0],a[1]));g.closePath()}}];
+if(wh)for(const x of[20,80])dr.push(g=>{g.beginPath();g.arc(ox+x*s,oy+26*s,4.5*s,0,7)});
+lc.lineWidth=S.lw;lc.lineJoin='round';lc.strokeStyle='#000';dr.forEach((d,i)=>{pc.fillStyle=i?'#2b3442':`rgb(${COL[S.ci]})`;d(pc);pc.fill();d(lc);lc.stroke()});ltD=1;chk();phReset()}
+const phReset=()=>{ph=null;$('#phr').hidden=true;$('#bUl').hidden=true};
+
+/* ---------- LBM D2Q9 ---------- */
+const f=new Float32Array(9*N),ft=new Float32Array(9*N),mask=new Uint8Array(N),R=new Float32Array(N).fill(1),UX=new Float32Array(N),UY=new Float32Array(N);
+const CX=[0,1,0,-1,0,1,-1,-1,1],CY=[0,0,1,0,-1,1,1,-1,-1],OP=[0,3,4,1,2,7,8,5,6],RY=[0,1,4,3,2,8,7,6,5],WT=[4/9,1/9,1/9,1/9,1/9,1/36,1/36,1/36,1/36];
+let XR=0,VM=2.2,RR=1,ST=0,FX=0,FY=0,DV=0,F=f,G=ft,bb={w:1,h:1,n:0};
+function init(){for(let k=0;k<9;k++){const e=WT[k];for(let i=0;i<N;i++)f[k*N+i]=ft[k*N+i]=e}F=f;G=ft;FX=FY=DV=0;ST=0;XR=0;fc=0;R.fill(1);UX.fill(0);UY.fill(0);for(let i=0;i<P;i++)sp(i,0)}
+const t1=mk(400,250),t2=mk(NX,NY);
+function build(){const a=t1.getContext('2d'),b=t2.getContext('2d');a.clearRect(0,0,400,250);a.drawImage(FIL,0,0,W,GY,0,0,400,250);a.drawImage(LN,0,0,W,GY,0,0,400,250);b.clearRect(0,0,NX,NY);b.drawImage(t1,0,0,400,250,0,0,NX,NY);
+const d=b.getImageData(0,0,NX,NY).data,al=new Float32Array(N),bs=new Uint8Array(N);for(let i=0;i<N;i++)al[i]=d[i*4+3]/255;
+if(S.smo>0){const c=al.slice();blur(c,NX,NY,1);for(let i=0;i<N;i++)bs[i]=c[i]>.4||al[i]>.6?1:0}else for(let i=0;i<N;i++)bs[i]=al[i]>.3?1:0;
+const o=new Uint8Array(N),q=[],sd=i=>{if(!bs[i]&&!o[i]){o[i]=1;q.push(i)}};
+for(let x=0;x<NX;x++){sd(x);sd(N-NX+x)}for(let y=0;y<NY;y++){sd(y*NX);sd(y*NX+NX-1)}
+while(q.length){const i=q.pop(),x=i%NX;if(x>0)sd(i-1);if(x<NX-1)sd(i+1);if(i>=NX)sd(i-NX);if(i<N-NX)sd(i+NX)}
+mask.fill(0);let x0=NX,x1=-1,y0=NY,y1=-1,n=0;
+for(let y=0;y<NY;y++)for(let x=3;x<NX-3;x++)if(!o[y*NX+x]){mask[y*NX+(S.flip?NX-1-x:x)]=1;n++;if(x<x0)x0=x;if(x>x1)x1=x;if(y<y0)y0=y;if(y>y1)y1=y}
+let gc=0;for(let x=0;x<NX;x++)if(mask[N-NX+x])gc++;bb={w:Math.max(1,x1-x0+1),h:Math.max(1,y1-y0+1),n,gc};init();RR=1;FL={v:0,z:0,vz:0,max:0}}
+function step(){let fx=0,fy=0;const a=F,b=G,rp=Math.min(1,ST/400),Ui=U*rp*rp*(3-2*rp);
+for(let y=0;y<NY;y++){const yo=y*NX;for(let x=0;x<NX;x++){const i=yo+x;if(mask[i])continue;
+const f1=a[N+i],f2=a[2*N+i],f3=a[3*N+i],f4=a[4*N+i],f5=a[5*N+i],f6=a[6*N+i],f7=a[7*N+i],f8=a[8*N+i];
+const r=a[i]+f1+f2+f3+f4+f5+f6+f7+f8;let ux=(f1-f3+f5-f6-f7+f8)/r,uy=(f2-f4+f5+f6-f7-f8)/r;R[i]=r;UX[i]=ux;UY[i]=uy;const um=Math.hypot(ux,uy);if(um>.25){ux*=.25/um;uy*=.25/um}const u2=1.5*(ux*ux+uy*uy);let pxx=0,pyy=0,pxy=0;for(let k=1;k<9;k++){const cu=3*(CX[k]*ux+CY[k]*uy),ne=a[k*N+i]-WT[k]*r*(1+cu+.5*cu*cu-u2);pxx+=CX[k]*CX[k]*ne;pyy+=CY[k]*CY[k]*ne;pxy+=CX[k]*CY[k]*ne}const om=2/(.58+Math.sqrt(.3364+.25*Math.sqrt(pxx*pxx+pyy*pyy+2*pxy*pxy)/r));
+for(let k=0;k<9;k++){const fk=a[k*N+i],cu=3*(CX[k]*ux+CY[k]*uy),p=fk+om*(WT[k]*r*(1+cu+.5*cu*cu-u2)-fk),xx=x+CX[k],yy=y+CY[k];
+if(xx<0||xx>=NX)continue;
+if(yy<0||yy>=NY){b[RY[k]*N+i]=p;continue}
+const j=yy*NX+xx;if(mask[j]){b[OP[k]*N+i]=p;fx+=2*p*CX[k];fy+=2*p*CY[k]}else b[k*N+j]=p}}}
+for(let y=0;y<NY;y++){let i=y*NX;if(!mask[i])for(let k=0;k<9;k++){const cu=3*CX[k]*Ui;b[k*N+i]=WT[k]*(1+cu+.5*cu*cu-1.5*Ui*Ui)}
+i=y*NX+NX-1;if(!mask[i]){const j=i-1,uj=UX[j],vj=UY[j],rj=R[j],u2j=1.5*(uj*uj+vj*vj);for(let k=0;k<9;k++){const cu=3*(CX[k]*uj+CY[k]*vj);b[k*N+i]=b[k*N+j]+WT[k]*(1-rj)*(1+cu+.5*cu*cu-u2j)}}}
+F=b;G=a;ST++;FX+=(fx-FX)*.04;FY+=(fy-FY)*.04;const d=fx-FX;DV+=(d*d-DV)*.04}
+
+/* визуализация */
+const fim=mk(NX,NY),fg=fim.getContext('2d'),fd=fg.createImageData(NX,NY);
+function paintFlow(){const d=fd.data,B=dark?[12,18,29]:[244,247,252],q=.5*U*U,xr=XR,av=clamp(FL.v/15,0,1);
+for(let i=0;i<N;i++){const o=i*4;if(mask[i]){d[o+3]=0;continue}let t;
+if(S.view==0)t=(R[i]-RR)/3/q/1.2;else if(S.view==1)t=(Math.hypot(UX[i],UY[i])/U-1)/.9;
+else{const x=i%NX,y=i/NX|0;t=x>0&&x<NX-1&&y>0&&y<NY-1?((UY[i+1]-UY[i-1])-(UX[i+NX]-UX[i-NX]))/2/.022:0}
+t=clamp(t,-1,1)*clamp((xr-(i%NX))/10,0,1)*av;const a=Math.pow(Math.abs(t),.75),T=t>0?[255,72,58]:[40,110,255];
+d[o]=B[0]+(T[0]-B[0])*a;d[o+1]=B[1]+(T[1]-B[1])*a;d[o+2]=B[2]+(T[2]-B[2])*a;d[o+3]=255}fg.putImageData(fd,0,0)}
+const P=420,PX=new Float32Array(P),PY=new Float32Array(P);
+const sp=(i,a)=>{PX[i]=a?Math.random()*NX:Math.random()*3;PY[i]=Math.random()*NY};
+function parts(n){for(let i=0;i<P;i++){const x=PX[i],y=PY[i],j=(y|0)*NX+(x|0);if(x<0||x>=NX-1||y<0||y>=NY||mask[j]||Math.random()<.004){sp(i,0);continue}PX[i]=x+UX[j]*n*VM;PY[i]=y+UY[j]*n*VM}}
+
+/* метрики */
+function refp(){let s=0,c=0;for(let y=0;y<4;y++)for(let x=8;x<40;x++){s+=R[y*NX+x];c++}RR+=(s/c-RR)*.05}
+function calc(){const v=S.kmh/3.6,q=.5*1.225*v*v,hb=Math.max(bb.h,4),k=.5*U*U*hb,mh=hb*4.5/bb.w,A=.82*1.8*mh,Sp=5.2,Wt=S.mass*9.81;
+const Cd=clamp(.1+.33*FX/k,.12,1.4),Cl=clamp(.5*-(FY-(RR-1)/3*bb.gc)/k,-1.5,2),D=q*Cd*A,L=q*Cl*Sp,lr=L/Wt,u=Math.sqrt(DV)/Math.max(Math.abs(FX),1e-5),stb=clamp(1-u/.3,0,1);
+const sc=100*(.5*clamp(1-(Cd-.22)/.75,0,1)+.3*clamp(1-Math.max(0,lr)/.5,0,1)+.2*stb);
+return{A,Cd,Cl,D,L,lr,stb,sc,Sp,Wt,P:D*v/1000,vto:Cl>.005?Math.sqrt(2*Wt/(1.225*Sp*Cl))*3.6:0}}
+function fly(dt){const vt=S.kmh/3.6,v=FL.v,q=.5*1.225*v*v,Wt=M.Wt,Lf=q*M.Cl*M.Sp,gnd=FL.z<=0;
+FL.v=Math.max(0,v+clamp(vt-v,-15*dt,9*dt));
+if(S.fl){const net=Lf-Wt;if(gnd&&net<=0){FL.z=0;FL.vz=0}else{FL.vz+=(net/S.mass-.04*FL.vz*Math.abs(FL.vz))*dt;FL.z+=FL.vz*dt;if(FL.z<0){FL.z=0;FL.vz=0}FL.max=Math.max(FL.max,FL.z)}}
+else{FL.z=Math.max(0,FL.z-20*dt);FL.vz=0}}
+const fmt=n=>Math.abs(n)>=1000?(n/1000).toFixed(2)+' кН':Math.round(n)+' Н';
+const GR=[[85,'S','#0d9488','Рекордный профиль'],[72,'A','#22a55e','Отличный профиль'],[58,'B','#84a80c','Хороший профиль'],[42,'C','#d99a06','Средний профиль'],[28,'D','#ea6a1a','Слабый профиль'],[0,'E','#e0392d','Плохой профиль']];
+function ui(){const r=$('#res');if(!M||bb.n<=15){r.innerHTML='<b>Нет машины</b><div class="ft">Вернитесь на вкладку «Рисунок» и нарисуйте профиль сбоку.</div>';return}
+const m=M,g=GR.find(x=>m.sc>=x[0]),T=(a,b)=>`<div class="m"><small>${a}</small><b>${b}</b></div>`;let w='';const pg=clamp((ST-1300)/1500,0,1);
+if(m.lr>1)w=`Подъёмная сила ${fmt(m.L)} больше веса ${fmt(m.Wt)} — при ${S.kmh} км/ч машина оторвётся.`;
+else if(m.vto&&m.vto<600)w=`Отрыв от земли возможен от ${Math.round(m.vto)} км/ч.`;
+r.innerHTML=`<div class="top"><div class="gd" style="background:${g[1]=='S'?g[2]:g[2]}">${g[1]}</div><div style="flex:1"><b style="font-size:18px">${Math.round(m.sc)} / 100</b><div class="ft" style="margin:0">${g[3]}</div><div class="bar"><i style="width:${m.sc}%;background:${g[2]}"></i></div></div></div>
+<div class="grid">${T('Сопротивление Cd',m.Cd.toFixed(3))}${T('Подъём Cl (− прижим)',(m.Cl>0?'+':'')+m.Cl.toFixed(3))}${T('Сила сопротивления',fmt(m.D))}${T(m.L>=0?'Подъёмная сила':'Прижимная сила',fmt(Math.abs(m.L)))}${T('Нагрузка на колёса',Math.round((1-m.lr)*100)+'% веса')}${T('Мощность на воздух',Math.round(m.P)+' кВт')}${T('Скорость отрыва',m.vto&&m.vto<900?Math.round(m.vto)+' км/ч':'не оторвётся')}${T('Стабильность потока',Math.round(m.stb*100)+'%')}${T('Вес',S.mass+' кг')}${T('Лобовая площадь',m.A.toFixed(2)+' м²')}</div>${pg<1?`<div class="ft">Ветер заполняет поле, значения уточняются: ${Math.round(pg*100)}%</div>`:''}${w?`<div class="wn">${w}</div>`:''}`}
+
+/* отрисовка */
+function ground(){cx.fillStyle=C.gr;cx.fillRect(0,GY,W,H-GY);cx.fillStyle=C.mu;cx.fillRect(0,GY,W,2);cx.globalAlpha=.5;for(let x=(((S.flip?-1:1)*FL.v*fc*.02)%80+80)%80-80;x<W;x+=80)cx.fillRect(x,GY+26,36,3);cx.globalAlpha=1}
+function render(){cx.setTransform(1.5,0,0,1.5,0,0);cx.fillStyle=C.cv;cx.fillRect(0,0,W,H);cx.textBaseline='top';
+if(tab==0){cx.strokeStyle=C.gr;cx.lineWidth=1;cx.beginPath();for(let x=50;x<W;x+=50){cx.moveTo(x,0);cx.lineTo(x,GY)}for(let y=50;y<GY;y+=50){cx.moveTo(0,y);cx.lineTo(W,y)}cx.stroke();
+if(ph&&S.ul){cx.globalAlpha=.35;cx.drawImage(ph.c,ph.pl[0],ph.pl[1],ph.pl[2],ph.pl[3]);cx.globalAlpha=1}
+art(cx);ground();cx.fillStyle=C.mu;cx.font='600 14px system-ui';cx.textAlign='center';
+cx.fillText(S.flip?'← ветер          нос машины →':'← нос машины          ветер →',W/2,12);if(empty){cx.font='600 18px system-ui';cx.fillText('Нарисуйте профиль машины сбоку',W/2,GY/2-30);cx.font='14px system-ui';cx.fillText('или выберите шаблон / загрузите фото ниже',W/2,GY/2)}cx.textAlign='left';return}
+cx.save();if(S.flip){cx.translate(W,0);cx.scale(-1,1)}cx.imageSmoothingEnabled=true;cx.drawImage(fim,0,0,W,GY);
+const tl=8+47*Math.min(2,VM/2.2);cx.beginPath();for(let i=0;i<P;i++){const x=PX[i],y=PY[i],j=(y|0)*NX+(x|0);if(j<0||j>=N)continue;cx.moveTo((x-UX[j]*tl)*SC,(y-UY[j]*tl)*SC);cx.lineTo(x*SC,y*SC)}
+cx.strokeStyle=dark?'rgba(255,255,255,.5)':'rgba(15,25,50,.4)';cx.lineWidth=1.3;cx.stroke();cx.restore();
+const mpx=bb.w*SC/4.5,zp=FL.z*mpx;cx.save();cx.translate(0,-zp);art(cx);cx.restore();ground();
+if(M){cx.fillStyle=C.tx;cx.font='700 17px system-ui';cx.fillText(Math.round(FL.v*3.6)+' км/ч',14,12);cx.fillStyle=C.mu;cx.font='600 13px system-ui';cx.fillText('Cd '+M.Cd.toFixed(2)+'   Cl '+(M.Cl>0?'+':'')+M.Cl.toFixed(2),14,36);
+if(XR<NX)cx.fillText('Ветер '+Math.round(clamp(XR/NX,0,1)*100)+'%',14,56);
+if(FL.z>.15){cx.fillStyle='#e0392d';cx.font='800 20px system-ui';cx.textAlign='right';cx.fillText(zp>H*.8?'УЛЕТЕЛА!':'ВЗЛЁТ  '+FL.z.toFixed(1)+' м',W-14,12);cx.textAlign='left'}}}
+let last=0;
+function loop(t){requestAnimationFrame(loop);const dt=Math.min(.05,(t-last)/1000||.016);last=t;
+if(tab){if(bb.n>15){const t0=performance.now(),bu=fc<90?16:9;let n=0;do{step();n++}while(n<10&&performance.now()-t0<bu);fc++;
+if(!isFinite(FX)||!isFinite(R[N>>1])){init();toast('Поток перезапущен')}VM=2.2*FL.v/55.6;XR+=n*U*VM;parts(n);refp();paintFlow();M=calc();fly(dt)}else M=null;if(fc%8==0)ui();render()}
+else if(need){render();need=0}}
+
+/* интерфейс */
+const dot=c=>`<i class="dt" style="background:${c}"></i>`,LG=[dot('#ff483a')+'повышенное давление'+dot('#2e6eff')+'разрежение',dot('#ff483a')+'воздух ускорен'+dot('#2e6eff')+'застой и след',dot('#ff483a')+'вихрь по часовой'+dot('#2e6eff')+'против часовой'];
+function go(i){tab=i;document.querySelectorAll('#tabs button').forEach((b,j)=>b.classList.toggle('on',j==i));$('#p0').hidden=!!i;$('#p1').hidden=!i;if(i){build();M=null;ui()}need=1}
+function bind(id,k,fm){const r=$('#'+id),o=$('#v'+id.slice(1)),u=()=>{S[k]=+r.value;o.textContent=fm?fm(S[k]):S[k]};r.value=S[k];r.oninput=()=>{u();save();need=1};u()}
+document.querySelectorAll('#tabs button').forEach((b,i)=>b.onclick=()=>go(i));
+document.querySelectorAll('#thm button').forEach(b=>b.onclick=()=>{S.theme=b.dataset.v;save();theme()});
+document.querySelectorAll('#vw button').forEach((b,i)=>b.onclick=()=>{S.view=i;save();vw()});
+function vw(){document.querySelectorAll('#vw button').forEach((b,i)=>b.classList.toggle('on',i==S.view));$('#lg').innerHTML=LG[S.view]}
+const TL=[['pen','Кисть'],['line','Линия'],['circle','Круг'],['oval','Овал'],['rect','Прямоуг.'],['tri','Треуг.'],['fill','Заливка'],['er','Ластик']];
+function tools(){const t=$('#tls');t.innerHTML='';TL.forEach(([k,n])=>{const b=document.createElement('button');b.className='tb'+(S.tool==k?' on':'');b.innerHTML=svg(k)+'<span>'+n+'</span>';b.onclick=()=>{S.tool=k;save();tools()};t.appendChild(b)})}
+function sws(){const e=$('#sws');e.innerHTML='<span>Цвет заливки</span>';COL.forEach((c,i)=>{const b=document.createElement('button');b.className='sq'+(i==S.ci?' on':'');b.style.background=`rgb(${c})`;b.setAttribute('aria-label','Цвет '+(i+1));b.onclick=()=>{S.ci=i;save();sws()};e.appendChild(b)})}
+const iconify=()=>document.querySelectorAll('[data-i]').forEach(e=>e.insertAdjacentHTML('afterbegin',svg(e.dataset.i)));
+$('#bUn').onclick=()=>{const q=ud.pop();if(q){rest(q);chk()}else toast('Нечего отменять')};
+$('#bCl').onclick=()=>{snap();lc.clearRect(0,0,W,H);pc.clearRect(0,0,W,H);ltD=1;chk();phReset()};
+const fl=()=>$('#bFl').innerHTML=svg(S.flip?'arr':'arl')+'Нос машины';
+$('#bFl').onclick=()=>{S.flip=!S.flip;save();fl();need=1;if(tab)build()};
+$('#bSm').onclick=()=>{snap();smoothLines(1+(S.smo>>3));toast('Контур сглажен')};
+$('#bUl').onclick=()=>{S.ul=!S.ul;save();$('#bUl').classList.toggle('on',S.ul);need=1};
+$('#fl').checked=S.fl;$('#fl').onchange=e=>{S.fl=e.target.checked;save();FL.z=0;FL.vz=0};
+$('#bGo').onclick=()=>{FL={v:0,z:0,vz:0,max:0};fc=0;XR=0};
+bind('rst','stab');bind('rlw','lw');bind('rsm','smo');bind('rpt','pt');bind('rms','mass',v=>v+' кг');bind('rkm','kmh',v=>v+' км/ч');
+$('#rpt').addEventListener('change',photo);$('#rpt').oninput=()=>{S.pt=+$('#rpt').value;$('#vpt').textContent=S.pt;save();clearTimeout(photo.t);photo.t=setTimeout(photo,120)};
+for(const k in PR){const b=document.createElement('button');b.className='b';b.textContent=k;b.onclick=()=>{preset(k);if(tab)build()};$('#prs').appendChild(b)}
+iconify();theme();tools();sws();fl();vw();preset('Седан',1);go(0);requestAnimationFrame(loop);
+})();
+</script>
+</body>
+</html>
